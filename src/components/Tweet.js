@@ -1,4 +1,4 @@
-import { dbService } from "../fbase";
+import { dbService, storageService } from "../fbase";
 import { useState } from "react";
 
 function Tweet({ tweetObj, isOwner }) {
@@ -10,6 +10,7 @@ function Tweet({ tweetObj, isOwner }) {
 
     if (ok) {
       await dbService.doc(`tweets/${tweetObj.id}`).delete();
+      await storageService.refFromURL(tweetObj.attachmentUrl).delete();
     }
   };
 
@@ -52,6 +53,14 @@ function Tweet({ tweetObj, isOwner }) {
       ) : (
         <>
           <h4>{tweetObj.text}</h4>
+          {tweetObj.attachmentUrl && (
+            <img
+              src={tweetObj.attachmentUrl}
+              width="100px"
+              height="100px"
+              alt=""
+            />
+          )}
           {isOwner && (
             <>
               <button onClick={onDeleteClick}>Delete Tweet</button>
